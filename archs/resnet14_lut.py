@@ -8,7 +8,7 @@ from .binary_utils.module_v1 import *
 from utils.registry import ARCH_REGISTRY
 
 import numpy as np
-from sim.para_save import intToBin, diff_base_save, lut_all_save
+from sim.para_save import intToBin, lut_all_save
 
 def _weights_init(m):
     classname = m.__class__.__name__
@@ -174,9 +174,7 @@ class BasicBlock_1w4a_LUT(nn.Module):
     def _forward_lut(self, x, lut):
         self.count += 1
         self.layer_idx = (self.planes // 32 + 1) * 4 + self.idx * 2 + self.count - 7
-        print(self.layer_idx)
-        lut_base = torch.zeros(64)
-        lut_diff = torch.zeros(64)
+        lut_all = torch.zeros(64*7)
 
         for i in range(self.planes):
 
@@ -186,23 +184,20 @@ class BasicBlock_1w4a_LUT(nn.Module):
 
             # calculate flags
             # the number is rounded to the nearest even integer
-            diff = lut[i, 1] - lut[i, 0]
-            for j in range(1, 7):
-                lut[i, j] = lut[i, j-1] + diff
-            # print('channel:', str(i), 'diff is ', diff, 'base is ', lut[i, 0])
             if self.layer_idx == 1:
-                lut_base[i+16] = lut[i, 0]
-                lut_diff[i+16] = diff
+                for j in range(7):
+                    lut_all[i*7 + j + 112] = lut[i, j]
+
             elif self.layer_idx == 2 or self.layer_idx == 6:
-                lut_base[i+32] = lut[i, 0]
-                lut_diff[i+32] = diff
+                for j in range(7):
+                    lut_all[i*7 + j + 224] = lut[i, j]
+
             elif self.layer_idx == 3:
-                lut_base[i + 48] = lut[i, 0]
-                lut_diff[i + 48] = diff
+                for j in range(7):
+                    lut_all[i * 7 + j + 336] = lut[i, j]
             else:
-                lut_base[i] = lut[i, 0]
-                lut_diff[i] = diff
-            print(self.layer_idx, lut[i], diff)
+                for j in range(7):
+                    lut_all[i * 7 + j] = lut[i, j]
             flag_0 = (data <= lut[i][0])  # 0.5
             flag_1 = (data < lut[i][1])  # 1.5
             flag_2 = (data <= lut[i][2])  # 2.5
@@ -238,9 +233,7 @@ class BasicBlock_1w4a_LUT(nn.Module):
             x[:, i, :, :] = torch.where(find_flag_7, torch.tensor(7, dtype=torch.float32).cuda(), x[:, i, :, :])
 
         # self.gen_feature([x], 'output')
-        # diff_base_save(lut_base, lut_diff, self.layer_idx)
-        # lut_all_save()
-        # exit()
+        lut_all_save(lut_all, self.layer_idx)
         return x
 
     def forward(self, x):
