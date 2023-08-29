@@ -1,0 +1,39 @@
+23-07-19 15:54:22.540 - INFO:   name: resnet14_1w4a_LUT_64ki_cifar10
+  use_tb_logger: True
+  model: CLSModel
+  class_num: 100
+  gpu_ids: [1]
+  datasets:[
+    val:[
+      name: CIFAR10
+      mode: CIFAR10
+      dataroot: ../../../dataroot
+      train: False
+      download: True
+      large: False
+      workers_per_gpu: 8
+      imgs_per_gpu: 100
+      phase: val
+      scale: 1
+    ]
+  ]
+  networks:[
+    netCLS:[
+      which_network: ResNet14_new_1w4a_LUT
+      setting:[
+        num_classes: 10
+      ]
+      pretrain:[
+        path: model_zoo/resnet14_1w4a_64ki_cifar10_netCLS.pth
+        strict_load: False
+      ]
+    ]
+  ]
+  is_train: False
+  path:[
+    root: D:\Learn\S9\ResNet14_ref\ResNet14_LUT
+    results_root: D:\Learn\S9\ResNet14_ref\ResNet14_LUT\results\experiment_resnet14_lut\resnet14_1w4a_LUT_64ki_cifar10
+    log: D:\Learn\S9\ResNet14_ref\ResNet14_LUT\results\experiment_resnet14_lut\resnet14_1w4a_LUT_64ki_cifar10\log
+  ]
+  dist: False
+

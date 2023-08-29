@@ -1,0 +1,92 @@
+23-08-28 20:52:05.394 - INFO:   name: resnet14_1w4a_LUT_64ki_cifar10
+  use_tb_logger: True
+  model: CLSModel
+  class_num: 100
+  gpu_ids: [0]
+  datasets:[
+    val:[
+      name: CIFAR10
+      mode: CIFAR10
+      dataroot: D:/Learn/S9/ResNet14_ref/ResNet14_LUT_1w4a/dataroot
+      train: False
+      download: True
+      large: False
+      workers_per_gpu: 0
+      imgs_per_gpu: 100
+      phase: val
+      scale: 1
+    ]
+  ]
+  networks:[
+    netCLS:[
+      which_network: ResNet14_new_1w4a_LUT
+      setting:[
+        num_classes: 10
+      ]
+      pretrain:[
+        path: ../64000_netCLS.pth
+        strict_load: False
+      ]
+    ]
+  ]
+  is_train: False
+  path:[
+    root: D:\Learn\S9\ResNet14_ref\ResNet14_LUT_1w4a\inf_nosw_para
+    results_root: D:\Learn\S9\ResNet14_ref\ResNet14_LUT_1w4a\inf_nosw_para\results\experiment_resnet14_lut\resnet14_1w4a_LUT_64ki_cifar10
+    log: D:\Learn\S9\ResNet14_ref\ResNet14_LUT_1w4a\inf_nosw_para\results\experiment_resnet14_lut\resnet14_1w4a_LUT_64ki_cifar10\log
+  ]
+  dist: False
+
+23-08-28 20:52:06.032 - INFO: Dataset [CIFAR10 - CIFAR10] is created.
+23-08-28 20:52:06.032 - INFO: Number of test images in [CIFAR10]: 10000
+23-08-28 20:52:06.130 - INFO: Network G structure: DataParallel - ResNet14_new_1w4a_LUT, with parameters: 172,519
+23-08-28 20:52:06.130 - INFO: ResNet14_new_1w4a_LUT(
+  (conv1): Conv2d(3, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+  (bn1): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (layer1): Sequential(
+    (0): BasicBlock_1w4a_LUT(
+      (conv1): Conv2d_IR_LSQ_1w4a(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn1): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d_IR_LSQ_1w4a(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+    (1): BasicBlock_1w4a_LUT(
+      (conv1): Conv2d_IR_LSQ_1w4a(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn1): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d_IR_LSQ_1w4a(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+  )
+  (layer2): Sequential(
+    (0): BasicBlock_1w4a_LUT(
+      (conv1): Conv2d_IR_LSQ_1w4a(16, 32, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+      (bn1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d_IR_LSQ_1w4a(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+    (1): BasicBlock_1w4a_LUT(
+      (conv1): Conv2d_IR_LSQ_1w4a(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d_IR_LSQ_1w4a(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+  )
+  (layer3): Sequential(
+    (0): BasicBlock_1w4a_LUT(
+      (conv1): Conv2d_IR_LSQ_1w4a(32, 64, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+      (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d_IR_LSQ_1w4a(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+    (1): BasicBlock_1w4a_LUT(
+      (conv1): Conv2d_IR_LSQ_1w4a(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d_IR_LSQ_1w4a(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+  )
+  (linear): Linear(in_features=64, out_features=10, bias=True)
+)
+23-08-28 20:52:06.130 - INFO: Model [CLSModel] is created.
+23-08-28 20:52:06.130 - INFO: 
+Testing [CIFAR10]...

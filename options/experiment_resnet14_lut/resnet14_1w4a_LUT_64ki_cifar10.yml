@@ -1,0 +1,31 @@
+  #### general settings
+  name: resnet14_1w4a_LUT_64ki_cifar10
+  
+  use_tb_logger: true
+  model: CLSModel
+  class_num: 100
+  gpu_ids: [0]
+
+  #### datasets
+  datasets:
+    val:
+      name: CIFAR10
+      mode: CIFAR10
+
+      dataroot: D:/Learn/S9/ResNet14_ref/ResNet14_LUT_1w4a/dataroot
+      train: false
+      download: true
+      large: false
+
+      workers_per_gpu: 0
+      imgs_per_gpu: 100
+
+  #### network structures
+  networks:
+    netCLS:
+      which_network: ResNet14_new_1w4a_LUT
+      setting:
+        num_classes: 10
+      pretrain: 
+        path: ../64000_netCLS.pth
+        strict_load: false
