@@ -173,7 +173,7 @@ class BasicBlock_1w4a_LUT(nn.Module):
 
     def _forward_lut(self, x, lut):
         self.count += 1
-        self.layer_idx =  (self.planes // 32 + 1) * 4 + self.idx * 2 + self.count - 7
+        self.layer_idx = (self.planes // 32 + 1) * 4 + self.idx * 2 + self.count - 7
         print(self.layer_idx)
         lut_base = torch.zeros(64)
         lut_diff = torch.zeros(64)
@@ -203,15 +203,6 @@ class BasicBlock_1w4a_LUT(nn.Module):
                 lut_base[i] = lut[i, 0]
                 lut_diff[i] = diff
             print(self.layer_idx, lut[i], diff)
-            # print('  // channel ', str(i), '    ', lut[i])
-            # for j in range(0, 7):
-            #     if lut[i][j] < 0:
-            #         print('  hard_lut_', str(i) + '[' + str(j) + ']', ' <= -8\'d', '{:.0f}'.format(lut[i, j].abs()),
-            #               ';', sep="")
-            #     elif lut[i, j] == 0:
-            #         print('  hard_lut_', str(i) + '[' + str(j) + ']', ' <= 8\'d0;', sep="")
-            #     else:
-            #         print('  hard_lut_', str(i), '[', str(j), ']', ' <= 8\'d' '{:.0f}'.format(lut[i, j]), ';', sep="")
             flag_0 = (data <= lut[i][0])  # 0.5
             flag_1 = (data < lut[i][1])  # 1.5
             flag_2 = (data <= lut[i][2])  # 2.5
@@ -248,7 +239,7 @@ class BasicBlock_1w4a_LUT(nn.Module):
 
         # self.gen_feature([x], 'output')
         # diff_base_save(lut_base, lut_diff, self.layer_idx)
-        lut_all_save()
+        # lut_all_save()
         # exit()
         return x
 
