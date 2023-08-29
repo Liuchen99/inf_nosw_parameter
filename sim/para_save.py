@@ -34,6 +34,7 @@ def intToBin(number, index, feature=True):
 
 
 def lut_all_save(lut, layer_idx):
+    # lut_all
     base_h1 = ["" for x in range(448)]
     base_h = ["" for x in range(152)]
     for j in range(448):

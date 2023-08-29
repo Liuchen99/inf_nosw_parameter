@@ -234,6 +234,7 @@ class BasicBlock_1w4a_LUT(nn.Module):
 
         # self.gen_feature([x], 'output')
         lut_all_save(lut_all, self.layer_idx)
+        # exit()
         return x
 
     def forward(self, x):
