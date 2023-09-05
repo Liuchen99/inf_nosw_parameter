@@ -11,7 +11,7 @@ def findAllFile(base):
             yield f
 
 
-base = 'sim/mid_data/'
+base = 'sim/weight/'
 cnt = 0
 for i in findAllFile(base):
     if cnt < 4:
@@ -34,8 +34,7 @@ for i in findAllFile(base):
         print('uint8_t weight_layer6_conv2_bank' + str((cnt - 10) % 16) + '[288] = {')
     cnt += 1
 
-    with open('sim/mid_data/' + i, "r", encoding='utf-8') as f:  # 打开文本
-        # print(i)
+    with open('sim/weight/' + i, "r", encoding='utf-8') as f:  # 打开文本
         print(f.read())
     #
     print('};')

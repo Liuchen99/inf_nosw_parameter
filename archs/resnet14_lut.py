@@ -6,7 +6,7 @@ import torch.nn.init as init
 
 from .binary_utils.module_v1 import *
 from utils.registry import ARCH_REGISTRY
-
+from sim.util import util
 import numpy as np
 from sim.para_save import intToBin, lut_all_save
 
@@ -126,7 +126,7 @@ class BasicBlock_1w4a_LUT(nn.Module):
                                     str_data = ''
                                     count = 0
 
-                file_path = 'sim/mid_data/' + name + "weight_in" + str((channel_in + 1) * 16) + "_out" + str(
+                file_path = 'sim/weight/' + name + "_weight_in" + str((channel_in + 1) * 16) + "_out" + str(
                     (channel_out + 1) * 16) + ".coe"
                 with open(file_path, mode='w', encoding='utf-8') as file_obj:
                     for i in resu:
@@ -143,16 +143,17 @@ class BasicBlock_1w4a_LUT(nn.Module):
                     val_hex = hex(val_int)
                     val_hex = val_hex[2:].rjust(1, '0')
                     str = val_hex + str
-                resu.append('0x' + str + ',')
+                # resu.append('0x' + str + ',')
+                resu.append(str)
 
         file_path = 'sim/mid_data/' + name + ".coe"
         with open(file_path, mode='w', encoding='utf-8') as file_obj:
-            file_obj.write('{')
+            # file_obj.write('{')
             for i in resu:
                 file_obj.write(i + '\n')
-            file_obj.write('},\n')
+            # file_obj.write('},\n')
 
-    def _forward_conv(self, x, conv):
+    def _forward_conv(self, x, conv, layer_idx):
         w = conv.weight
         bw = w - w.view(w.size(0), -1).mean(-1).view(w.size(0), 1, 1, 1)
         bw = bw / bw.view(bw.size(0), -1).std(-1).view(bw.size(0), 1, 1, 1)
@@ -166,14 +167,12 @@ class BasicBlock_1w4a_LUT(nn.Module):
         # bw = bw * sw
         weight = bw.clone()
         weight[weight == -1] = torch.tensor(0)
-
-        # self.gen_weight(weight, '')
+        self.gen_weight(weight, name=str(layer_idx))
 
         return conv._conv_forward(x, bw, self.conv1.bias)
 
     def _forward_lut(self, x, lut):
-        self.count += 1
-        self.layer_idx = (self.planes // 32 + 1) * 4 + self.idx * 2 + self.count - 7
+
         lut_all = torch.zeros(64*7)
 
         for i in range(self.planes):
@@ -181,7 +180,7 @@ class BasicBlock_1w4a_LUT(nn.Module):
             # get i-th channel data
             # print(x.shape)  # 100,16,32,32
             data = x[:, i, :, :]
-
+            # print(lut[i])
             # calculate flags
             # the number is rounded to the nearest even integer
             if self.layer_idx == 1:
@@ -231,9 +230,17 @@ class BasicBlock_1w4a_LUT(nn.Module):
             x[:, i, :, :] = torch.where(find_flag_5, torch.tensor(5, dtype=torch.float32).cuda(), x[:, i, :, :])
             x[:, i, :, :] = torch.where(find_flag_6, torch.tensor(6, dtype=torch.float32).cuda(), x[:, i, :, :])
             x[:, i, :, :] = torch.where(find_flag_7, torch.tensor(7, dtype=torch.float32).cuda(), x[:, i, :, :])
-
-        # self.gen_feature([x], 'output')
-        lut_all_save(lut_all, self.layer_idx)
+        if self.planes == 16:
+            self.gen_feature([x[:, :16, :, :]], name='layer' + str(self.layer_idx)+'_16_')
+        elif self.planes == 32:
+            self.gen_feature([x[:, :16, :, :]], name='layer' + str(self.layer_idx)+'_16_')
+            self.gen_feature([x[:, 16:32, :, :]], name='layer' + str(self.layer_idx)+'_32_')
+        elif self.planes == 64:
+            self.gen_feature([x[:, :16, :, :]], name='layer' + str(self.layer_idx)+'_16_')
+            self.gen_feature([x[:, 16:32, :, :]], name='layer' + str(self.layer_idx)+'_32_')
+            self.gen_feature([x[:, 32:48, :, :]], name='layer' + str(self.layer_idx)+'_48_')
+            self.gen_feature([x[:, 48:64, :, :]], name='layer' + str(self.layer_idx)+'_64_')
+        # lut_all_save(lut_all, self.layer_idx)
         # exit()
         return x
 
@@ -241,10 +248,16 @@ class BasicBlock_1w4a_LUT(nn.Module):
         if not hasattr(self, "lut1"):
             self._init_lut(1)
             self._init_lut(2)
+        self.count += 1
+        self.layer_idx = (self.planes // 32 + 1) * 4 + self.idx * 2 + self.count - 7
 
-        x = self._forward_conv(x, self.conv1)
+        x = self._forward_conv(x, self.conv1, self.layer_idx)
         x = self._forward_lut(x, self.lut1)
-        x = self._forward_conv(x, self.conv2)
+
+        self.count += 1
+        self.layer_idx = (self.planes // 32 + 1) * 4 + self.idx * 2 + self.count - 7
+
+        x = self._forward_conv(x, self.conv2, self.layer_idx)
         x = self._forward_lut(x, self.lut2)
         return x
 
